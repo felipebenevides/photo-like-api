@@ -2,21 +2,34 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthService } from './auth/auth.service';
-import { AuthController } from './auth/auth.controller';
-import { LocalStrategy } from './auth/local.strategy';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { AuthService } from './modules/auth/auth.service';
+import { AuthController } from './modules/auth/auth.controller';
+import { LocalStrategy } from './modules/auth/local.strategy';
+import {  } from "module";
+// import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { PhotoLikesController } from './modules/photo-likes/photo-likes.controller';
+import { PhotoLikeModule } from './modules/photo-likes/photo-likes.module';
+import { MongooseModule } from '@nestjs/mongoose';
+// import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 
 
 @Module({
   imports: [
+    PhotoLikeModule,
     JwtModule.register({
       secret: 'your-secret-key',
       signOptions: { expiresIn: '1h' },
     }),
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: ':memory:',
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true,
+    }),
   ],
-  controllers: [AppController,AuthController],
+  controllers: [AppController,AuthController,PhotoLikesController],
   providers: [AppService, AuthService, LocalStrategy],
 })
 
